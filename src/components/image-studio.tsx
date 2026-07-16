@@ -9,6 +9,7 @@ import {
   CopyPlusIcon,
   EyeIcon,
   EyeOffIcon,
+  HistoryIcon,
   ImagePlusIcon,
   KeyRoundIcon,
   LanguagesIcon,
@@ -22,6 +23,7 @@ import {
   RefreshCwIcon,
   ScissorsIcon,
   SparklesIcon,
+  Trash2Icon,
   WandSparklesIcon,
   XIcon,
 } from "lucide-react"
@@ -65,6 +67,13 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
+import {
+  clearHistory,
+  deleteHistoryEntry,
+  loadHistory,
+  saveHistoryEntry,
+  type HistoryEntry,
+} from "@/lib/history-store"
 import { type GeneratedImage } from "@/lib/image-request"
 import {
   DEFAULT_LOCALE,
@@ -1098,6 +1107,8 @@ export function ImageStudio({ initialLocale = DEFAULT_LOCALE }: { initialLocale?
   const [result, setResult] = useState<StudioResponse | null>(null)
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
   const [activeSource, setActiveSource] = useState<ActiveSource | null>(null)
+  const [history, setHistory] = useState<HistoryEntry<StudioResponse>[]>([])
+  const [activeHistoryId, setActiveHistoryId] = useState<string | null>(null)
   const locale = localeOverride ?? browserLocale
   const text = studioMessages[locale]
   const workflow = getWorkflowCopy(locale)
@@ -1173,6 +1184,20 @@ export function ImageStudio({ initialLocale = DEFAULT_LOCALE }: { initialLocale?
 
     writeStoredConnectionPreferences({ apiKey, endpoint })
   }, [apiKey, endpoint, hasLoadedPreferences, rememberKey])
+
+  useEffect(() => {
+    let cancelled = false
+
+    loadHistory<StudioResponse>().then((entries) => {
+      if (!cancelled) {
+        setHistory(entries)
+      }
+    })
+
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   useEffect(() => {
     uploadsRef.current = uploads
@@ -1410,6 +1435,41 @@ export function ImageStudio({ initialLocale = DEFAULT_LOCALE }: { initialLocale?
     }
   }
 
+  async function commitToHistory(response: StudioResponse) {
+    const entry: HistoryEntry<StudioResponse> = {
+      id: crypto.randomUUID(),
+      createdAt: Date.now(),
+      imageCount: response.images.length,
+      response,
+    }
+
+    setActiveHistoryId(entry.id)
+
+    try {
+      setHistory(await saveHistoryEntry(entry))
+    } catch {
+      setHistory((current) => [entry, ...current])
+    }
+  }
+
+  function restoreHistory(entry: HistoryEntry<StudioResponse>) {
+    setResult(entry.response)
+    setSelectedImageIndex(0)
+    setActiveHistoryId(entry.id)
+  }
+
+  function removeHistory(id: string) {
+    setHistory((current) => current.filter((entry) => entry.id !== id))
+    setActiveHistoryId((current) => (current === id ? null : current))
+    void deleteHistoryEntry(id).catch(() => undefined)
+  }
+
+  function clearAllHistory() {
+    setHistory([])
+    setActiveHistoryId(null)
+    void clearHistory().catch(() => undefined)
+  }
+
   async function callProxy(requestedCount: number): Promise<{ endpoint: string; images: GeneratedImage[] }> {
     const formData = new FormData()
     const requestPrompt = buildRequestPrompt(prompt, activeSource)
@@ -1540,10 +1600,12 @@ export function ImageStudio({ initialLocale = DEFAULT_LOCALE }: { initialLocale?
       }
 
       const visibleImages = images.slice(0, total)
+      const finalResult = createResult(visibleImages)
 
-      setResult(createResult(visibleImages))
+      setResult(finalResult)
       setSelectedImageIndex((current) => current < visibleImages.length ? current : 0)
       setProgress(100)
+      void commitToHistory(finalResult)
 
       if (visibleImages.length < total && firstError) {
         toast.warning(
@@ -2090,6 +2152,20 @@ export function ImageStudio({ initialLocale = DEFAULT_LOCALE }: { initialLocale?
             </div>
           </div>
 
+          {history.length > 0 && (
+            <HistoryStrip
+              activeId={activeHistoryId}
+              clearLabel={text.historyClear}
+              entries={history}
+              removeLabel={text.historyRemove}
+              restoreLabel={text.historyRestore}
+              title={text.historyTitle}
+              onClear={clearAllHistory}
+              onRemove={removeHistory}
+              onRestore={restoreHistory}
+            />
+          )}
+
           <div className="relative flex-1 overflow-y-auto p-5">
             {result?.images.length ? (
               <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_380px]">
@@ -2276,6 +2352,91 @@ export function ImageStudio({ initialLocale = DEFAULT_LOCALE }: { initialLocale?
           )}
         </main>
       </div>
+    </div>
+  )
+}
+
+function HistoryStrip({
+  activeId,
+  clearLabel,
+  entries,
+  removeLabel,
+  restoreLabel,
+  title,
+  onClear,
+  onRemove,
+  onRestore,
+}: {
+  activeId: string | null
+  clearLabel: string
+  entries: HistoryEntry<StudioResponse>[]
+  removeLabel: string
+  restoreLabel: string
+  title: string
+  onClear: () => void
+  onRemove: (id: string) => void
+  onRestore: (entry: HistoryEntry<StudioResponse>) => void
+}) {
+  return (
+    <div className="relative flex items-center gap-3 border-b bg-muted/10 px-5 py-2.5">
+      <div className="flex shrink-0 items-center gap-2 text-xs font-medium text-muted-foreground">
+        <HistoryIcon className="size-3.5" />
+        <span>{title}</span>
+        <Badge variant="secondary" className="rounded-md px-1.5 py-0 text-[10px]">
+          {entries.length}
+        </Badge>
+      </div>
+
+      <div className="flex min-w-0 flex-1 items-center gap-2 overflow-x-auto py-1">
+        {entries.map((entry) => {
+          const cover = entry.response.images[0]
+          const isActive = entry.id === activeId
+
+          return (
+            <div key={entry.id} className="group/history relative shrink-0">
+              <button
+                type="button"
+                aria-label={restoreLabel}
+                aria-pressed={isActive}
+                onClick={() => onRestore(entry)}
+                className={cn(
+                  "relative block size-14 overflow-hidden rounded-md border bg-background outline-none transition-colors focus-visible:ring-3 focus-visible:ring-ring/40",
+                  isActive
+                    ? "border-primary ring-2 ring-primary/25"
+                    : "border-border hover:border-foreground/40"
+                )}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img alt="" className="size-full object-cover" src={cover?.src} />
+                {entry.imageCount > 1 && (
+                  <span className="absolute bottom-0.5 right-0.5 rounded bg-background/85 px-1 text-[9px] font-semibold text-foreground shadow-sm">
+                    ×{entry.imageCount}
+                  </span>
+                )}
+              </button>
+              <button
+                type="button"
+                aria-label={removeLabel}
+                onClick={() => onRemove(entry.id)}
+                className="absolute -right-1.5 -top-1.5 grid size-5 place-items-center rounded-full border bg-background text-muted-foreground opacity-0 shadow-sm transition-opacity hover:text-foreground focus-visible:opacity-100 group-hover/history:opacity-100"
+              >
+                <XIcon className="size-3" />
+              </button>
+            </div>
+          )
+        })}
+      </div>
+
+      <Button
+        type="button"
+        size="sm"
+        variant="ghost"
+        className="h-8 shrink-0 rounded-md px-2 text-xs text-muted-foreground"
+        onClick={onClear}
+      >
+        <Trash2Icon data-icon="inline-start" />
+        {clearLabel}
+      </Button>
     </div>
   )
 }

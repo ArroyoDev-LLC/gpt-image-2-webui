@@ -1,0 +1,15 @@
+.git
+.gitignore
+.gcloudignore
+node_modules
+.next
+out
+build
+.direnv
+.env
+.env.*
+!.envrc
+*.log
+*.tsbuildinfo
+.DS_Store
+.vercel

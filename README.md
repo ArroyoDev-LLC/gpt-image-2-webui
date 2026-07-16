@@ -94,7 +94,7 @@ cd gpt-image-2-webui
 ### 2. Install dependencies
 
 ```bash
-npm install
+pnpm install
 ```
 
 ### 3. Configure environment variables
@@ -116,7 +116,7 @@ OPENAI_API_KEY=sk-...
 ### 4. Start the dev server
 
 ```bash
-npm run dev
+pnpm dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
@@ -152,8 +152,8 @@ Open [http://localhost:3000](http://localhost:3000).
 The project uses Next.js `standalone` output:
 
 ```bash
-npm run build
-npm run start
+pnpm build
+pnpm start
 ```
 
 ## API key and privacy

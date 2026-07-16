@@ -79,7 +79,7 @@ cd gpt-image-2-webui
 ### 2. 安装依赖
 
 ```bash
-npm install
+pnpm install
 ```
 
 ### 3. 配置环境变量
@@ -101,7 +101,7 @@ OPENAI_API_KEY=sk-...
 ### 4. 启动开发服务
 
 ```bash
-npm run dev
+pnpm dev
 ```
 
 打开 [http://localhost:3000](http://localhost:3000) 即可使用。
@@ -137,8 +137,8 @@ npm run dev
 项目已开启 Next.js `standalone` 输出：
 
 ```bash
-npm run build
-npm run start
+pnpm build
+pnpm start
 ```
 
 ## API Key 与隐私说明

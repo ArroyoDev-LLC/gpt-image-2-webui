@@ -138,6 +138,23 @@ Open [http://localhost:3000](http://localhost:3000).
 | `OPENAI_API_KEY` | No | Used by server proxy mode. A key entered in the UI takes priority; otherwise the server env value is used. |
 | `NEXT_ASSET_PREFIX` | No | Sets the static asset prefix for sub-path or CDN deployments. |
 
+## Prompt presets
+
+Prompt presets come from a `presets.json` file at the project root - a JSON array of prompt strings. The file is gitignored, so your presets stay out of version control. Start from the example:
+
+```bash
+cp presets.example.json presets.json
+```
+
+```json
+[
+  "Your first preset prompt",
+  "Your second preset prompt"
+]
+```
+
+When `presets.json` is present and non-empty, its entries replace the built-in presets for every language. When it is absent or empty, the built-in localized presets are used. The server reads the file at startup, so restart it locally (or redeploy) after editing.
+
 ## Deploy
 
 ### Vercel

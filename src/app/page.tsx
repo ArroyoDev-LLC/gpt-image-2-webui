@@ -2,6 +2,7 @@ import { cookies, headers } from "next/headers"
 
 import { ImageStudio } from "@/components/image-studio"
 import { LOCALE_COOKIE_KEY, resolveLocaleFrom } from "@/lib/i18n"
+import { loadPromptPresets } from "@/lib/prompt-presets"
 
 export default async function Home() {
   const cookieStore = await cookies()
@@ -11,5 +12,5 @@ export default async function Home() {
     headerStore.get("accept-language")
   )
 
-  return <ImageStudio initialLocale={initialLocale} />
+  return <ImageStudio initialLocale={initialLocale} promptPresetOverride={loadPromptPresets()} />
 }

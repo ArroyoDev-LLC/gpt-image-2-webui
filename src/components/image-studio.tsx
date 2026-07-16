@@ -1074,7 +1074,13 @@ function writeStoredConnectionPreferences({
   localStorage.removeItem(LEGACY_ENDPOINT_KEY)
 }
 
-export function ImageStudio({ initialLocale = DEFAULT_LOCALE }: { initialLocale?: Locale }) {
+export function ImageStudio({
+  initialLocale = DEFAULT_LOCALE,
+  promptPresetOverride,
+}: {
+  initialLocale?: Locale
+  promptPresetOverride?: string[]
+}) {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const activeSourceRef = useRef<ActiveSource | null>(null)
   const uploadsRef = useRef<UploadPreview[]>([])
@@ -1114,7 +1120,10 @@ export function ImageStudio({ initialLocale = DEFAULT_LOCALE }: { initialLocale?
   const workflow = getWorkflowCopy(locale)
   const isCjk = isCjkLocale(locale)
   const selectedLocale = LOCALE_OPTIONS.find((item) => item.value === locale) || LOCALE_OPTIONS[0]
-  const promptPresets = useMemo(() => studioPromptPresets[locale], [locale])
+  const promptPresets = useMemo(
+    () => (promptPresetOverride && promptPresetOverride.length > 0 ? promptPresetOverride : studioPromptPresets[locale]),
+    [locale, promptPresetOverride]
+  )
   const prompt = customPrompt ?? promptPresets[selectedPromptPresetIndex] ?? promptPresets[0]
   const sizeOptions = useMemo(() => getSizeOptions(locale), [locale])
   const customSizeValue = useMemo(() => normalizeCustomSize(customSize), [customSize])

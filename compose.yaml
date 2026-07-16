@@ -1,0 +1,9 @@
+services:
+  web:
+    build: .
+    image: gpt-image-2-webui
+    ports:
+      - "3000:3000"
+    environment:
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+    restart: unless-stopped

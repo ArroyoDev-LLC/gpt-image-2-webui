@@ -1,0 +1,14 @@
+node_modules
+.next
+.git
+.direnv
+.env*
+.envrc*
+mise.toml
+Dockerfile
+.dockerignore
+README*.md
+.gitignore
+*.log
+.vercel
+.DS_Store

@@ -37,6 +37,9 @@ yarn-error.log*
 .env*
 !.envrc
 
+# local prompt presets (copy presets.example.json to presets.json)
+/presets.json
+
 # vercel
 .vercel
 

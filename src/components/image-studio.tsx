@@ -1294,6 +1294,30 @@ export function ImageStudio({ initialLocale = DEFAULT_LOCALE }: { initialLocale?
     }
   }, [addUploads])
 
+  useEffect(() => {
+    const handlePaste = (event: ClipboardEvent) => {
+      const items = event.clipboardData?.items
+      if (!items) {
+        return
+      }
+
+      const pastedImages = Array.from(items)
+        .filter((item) => item.kind === "file" && item.type.startsWith("image/"))
+        .map((item) => item.getAsFile())
+        .filter((file): file is File => file !== null)
+
+      if (pastedImages.length === 0) {
+        return
+      }
+
+      event.preventDefault()
+      addUploads(pastedImages)
+    }
+
+    window.addEventListener("paste", handlePaste)
+    return () => window.removeEventListener("paste", handlePaste)
+  }, [addUploads])
+
   const removeUpload = useCallback((id: string) => {
     setUploads((current) => {
       const removed = current.find((upload) => upload.id === id)

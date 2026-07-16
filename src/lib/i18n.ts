@@ -106,6 +106,10 @@ const en = {
   backgroundAuto: "Auto",
   backgroundOpaque: "Opaque",
   backgroundTransparent: "Transparent",
+  historyTitle: "History",
+  historyClear: "Clear",
+  historyRestore: "Restore this generation",
+  historyRemove: "Remove from history",
 } as const
 
 export type StudioMessages = { [Key in keyof typeof en]: string }
@@ -198,6 +202,10 @@ export const studioMessages: Record<Locale, StudioMessages> = {
     backgroundAuto: "自动",
     backgroundOpaque: "不透明",
     backgroundTransparent: "透明",
+    historyTitle: "历史",
+    historyClear: "清除",
+    historyRestore: "恢复此次生成",
+    historyRemove: "从历史中移除",
   },
   "zh-TW": {
     metadataTitle: "ImgX Studio｜AI 圖片工作台",
@@ -284,6 +292,10 @@ export const studioMessages: Record<Locale, StudioMessages> = {
     backgroundAuto: "自動",
     backgroundOpaque: "不透明",
     backgroundTransparent: "透明",
+    historyTitle: "歷史",
+    historyClear: "清除",
+    historyRestore: "還原這次生成",
+    historyRemove: "從歷史中移除",
   },
   ja: {
     metadataTitle: "ImgX Studio | AI画像ワークスペース",
@@ -370,6 +382,10 @@ export const studioMessages: Record<Locale, StudioMessages> = {
     backgroundAuto: "自動",
     backgroundOpaque: "不透明",
     backgroundTransparent: "透明",
+    historyTitle: "履歴",
+    historyClear: "クリア",
+    historyRestore: "この生成を復元",
+    historyRemove: "履歴から削除",
   },
   ko: {
     ...en,
@@ -455,6 +471,10 @@ export const studioMessages: Record<Locale, StudioMessages> = {
     backgroundAuto: "자동",
     backgroundOpaque: "불투명",
     backgroundTransparent: "투명",
+    historyTitle: "기록",
+    historyClear: "지우기",
+    historyRestore: "이 생성 복원",
+    historyRemove: "기록에서 제거",
   },
   es: {
     ...en,
@@ -541,6 +561,10 @@ export const studioMessages: Record<Locale, StudioMessages> = {
     backgroundAuto: "Auto",
     backgroundOpaque: "Opaco",
     backgroundTransparent: "Transparente",
+    historyTitle: "Historial",
+    historyClear: "Borrar",
+    historyRestore: "Restaurar esta generación",
+    historyRemove: "Quitar del historial",
   },
   fr: {
     ...en,
@@ -625,6 +649,10 @@ export const studioMessages: Record<Locale, StudioMessages> = {
     qualityHigh: "Haute",
     backgroundOpaque: "Non transparent",
     backgroundTransparent: "Avec transparence",
+    historyTitle: "Historique",
+    historyClear: "Effacer",
+    historyRestore: "Restaurer cette génération",
+    historyRemove: "Retirer de l'historique",
   },
   de: {
     ...en,
@@ -709,6 +737,10 @@ export const studioMessages: Record<Locale, StudioMessages> = {
     qualityHigh: "Hoch",
     backgroundOpaque: "Deckend",
     backgroundTransparent: "Mit Transparenz",
+    historyTitle: "Verlauf",
+    historyClear: "Löschen",
+    historyRestore: "Diese Generierung wiederherstellen",
+    historyRemove: "Aus dem Verlauf entfernen",
   },
   pt: {
     ...en,
@@ -793,6 +825,10 @@ export const studioMessages: Record<Locale, StudioMessages> = {
     qualityHigh: "Alta",
     backgroundOpaque: "Opaco",
     backgroundTransparent: "Transparente",
+    historyTitle: "Histórico",
+    historyClear: "Limpar",
+    historyRestore: "Restaurar esta geração",
+    historyRemove: "Remover do histórico",
   },
 }
 

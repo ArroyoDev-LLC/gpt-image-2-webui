@@ -30,8 +30,12 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
+# direnv
+.direnv/
+
 # env files (can opt-in for committing if needed)
 .env*
+!.envrc
 
 # vercel
 .vercel

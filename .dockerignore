@@ -7,6 +7,8 @@ node_modules
 mise.toml
 Dockerfile
 .dockerignore
+compose.yaml
+docker-compose.yml
 README*.md
 .gitignore
 *.log

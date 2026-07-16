@@ -180,14 +180,9 @@ gcloud config set project <YOUR_PROJECT_ID>
 just deploy
 ```
 
-By default the service is public with **no server API key**, so each visitor uses their own key (browser-direct mode) - nothing to expose. To have the server hold the key instead, keep it in Secret Manager and restrict access rather than leaving the service open:
+`just deploy` passes `OPENAI_API_KEY` from your local shell to the service (`--set-env-vars`), so make sure it is exported in your environment before deploying. If it is unset, the service runs without a server key and visitors use their own (browser-direct mode).
 
-```bash
-gcloud run deploy gpt-image-2-webui \
-  --source . --region us-central1 \
-  --no-allow-unauthenticated \
-  --set-secrets OPENAI_API_KEY=gpt-image-openai-key:latest
-```
+> **Cost warning:** the service is public (`--allow-unauthenticated`), so a server-side key means anyone who finds the URL can spend against it. To lock it down, redeploy with `--no-allow-unauthenticated`, or grant only specific principals the `run.invoker` role.
 
 ## API key and privacy
 

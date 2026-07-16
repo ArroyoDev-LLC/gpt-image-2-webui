@@ -156,6 +156,39 @@ pnpm build
 pnpm start
 ```
 
+### Docker
+
+A multi-stage `Dockerfile` builds the standalone server:
+
+```bash
+docker build -t gpt-image-2-webui .
+docker run -p 3000:3000 gpt-image-2-webui
+# or
+OPENAI_API_KEY=sk-... docker compose up --build
+```
+
+### Google Cloud Run
+
+The `justfile` ships Cloud Run recipes that build from the `Dockerfile` (requires `gcloud`):
+
+```bash
+# One-time: authenticate and select the target project
+gcloud auth login
+gcloud config set project <YOUR_PROJECT_ID>
+
+# Deploy (service: gpt-image-2-webui)
+just deploy
+```
+
+By default the service is public with **no server API key**, so each visitor uses their own key (browser-direct mode) - nothing to expose. To have the server hold the key instead, keep it in Secret Manager and restrict access rather than leaving the service open:
+
+```bash
+gcloud run deploy gpt-image-2-webui \
+  --source . --region us-central1 \
+  --no-allow-unauthenticated \
+  --set-secrets OPENAI_API_KEY=gpt-image-openai-key:latest
+```
+
 ## API key and privacy
 
 - In browser-direct mode, the API key is sent from the browser to the endpoint you configure.

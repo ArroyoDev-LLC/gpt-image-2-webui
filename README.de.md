@@ -48,9 +48,9 @@ ImgX Studio ist eine Premium-WebUI für **GPT Image / OpenAI-kompatible Image AP
 ```bash
 git clone <your-repo-url>
 cd gpt-image-2-webui
-npm install
+pnpm install
 cp .env.example .env.local
-npm run dev
+pnpm dev
 ```
 
 Öffne [http://localhost:3000](http://localhost:3000). Für Server proxy bitte `OPENAI_API_KEY` in `.env.local` setzen.
@@ -58,7 +58,7 @@ npm run dev
 ## Deployment und Datenschutz
 
 - Vercel: Repository forken, in Vercel importieren und bei Bedarf `OPENAI_API_KEY` hinzufügen.
-- Node.js: `npm run build`, danach `npm run start`.
+- Node.js: `pnpm build`, danach `pnpm start`.
 - Browser direct sendet den API Key vom Browser an den konfigurierten Endpoint.
 - Server proxy hält den Key auf dem Server.
 - **Remember on this device** speichert API Key und Base URL nur im `localStorage` des aktuellen Browsers.
